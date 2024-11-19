@@ -1,0 +1,21 @@
+{
+  "name": "print-node-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "node-gyp configure build",
+    "clean": "rm -rf build",
+    "rebuild": "npm run clean && npm run build",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "node-gyp": "^10.2.0"
+  },
+  "dependencies": {
+    "node-addon-api": "^8.2.2"
+  }
+}
