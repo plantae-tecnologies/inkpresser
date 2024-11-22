@@ -2,8 +2,13 @@
   "targets": [
     {
       "target_name": "addon",
-      "sources": ["src/addon.cpp", "src/printer.cpp"],
+      "sources": [
+        "native/src/addon.cpp",
+        "native/src/PrinterBuilder.cpp",
+        "native/src/PrinterInterface.cpp"
+      ],
       "include_dirs": [
+        "native/src",
         "<!(node -p \"require('node-addon-api').include\")"
       ],
       "dependencies": [
@@ -12,8 +17,20 @@
       "cflags!": ["-fno-exceptions"],
       "cflags_cc!": ["-fno-exceptions"],
       "conditions": [
-        ["OS=='win'", { "defines": ["_WIN32"] }],
-        ["OS!='win'", { "libraries": ["-lcups"] }]
+        [
+          "OS=='win'",
+          {
+            "sources": ["native/src/PrinterWin.cpp"],
+            "defines": ["_WIN32"]
+          }
+        ],
+        [
+          "OS!='win'",
+          {
+            "sources": ["native/src/PrinterPosix.cpp"],
+            "libraries": ["-lcups"]
+          }
+        ]
       ]
     }
   ]

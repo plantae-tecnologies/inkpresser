@@ -1,0 +1,27 @@
+\x1B\x40\x1B\x33\x2EProdutor: \x1B\x45\x01Produtor Anonimo\x1B\x45\x00\x1B\x21\x00                                   ROMANEIO DE ENTRADA
+CPF/CNPJ: \x1B\x45\x0112.345.678/9101-12\x1B\x45\x00\x1B\x21\x00                                         No 98765432
+IE......: \x1B\x45\x0112345678900\x1B\x45\x00\x1B\x21\x00                                                 15/05/2023
+--------------------------------------------------------------------------------
+Safra...: \x1B\x45\x01Milho\x1B\x45\x00\x1B\x21\x00
+Fazenda.: \x1B\x45\x01Fazenda Anonima\x1B\x45\x00\x1B\x21\x00
+Talhoes.: \x1B\x45\x01Lote 21 - Variedades: Milho hibrido (100%)\x1B\x45\x00\x1B\x21\x00
+--------------------------------------------------------------------------------
+Produto......: \x1B\x45\x01Milho\x1B\x45\x00\x1B\x21\x00                            Tipo Produto.: \x1B\x45\x01GMO\x1B\x45\x00\x1B\x21\x00      
+Transportador:                                  Placa/UF.....: \x1B\x45\x01XYZ-1234 - SP\x1B\x45\x00\x1B\x21\x00    
+Motorista....: \x1B\x45\x01Transportador - 123.456.789-00\x1B\x45\x00\x1B\x21\x00
+NF Produtor..: \x1B\x45\x0112345\x1B\x45\x00\x1B\x21\x00
+--------------------------------------------------------------------------------
+Peso Bruto...(+):  \x1B\x45\x0155.000 KG\x1B\x45\x00\x1B\x21\x00            Umidade..:   \x1B\x45\x0112,0 %     6.600 KG\x1B\x45\x00\x1B\x21\x00        
+Peso Tara....(-):   \x1B\x45\x015.000 KG\x1B\x45\x00\x1B\x21\x00            Impureza.:    \x1B\x45\x011,5 %       825 KG\x1B\x45\x00\x1B\x21\x00        
+Saldo........(=):  \x1B\x45\x0149.175 KG\x1B\x45\x00\x1B\x21\x00            Avariados:    \x1B\x45\x010,3 %       148 KG\x1B\x45\x00\x1B\x21\x00        
+Classificacao(-):       \x1B\x45\x010 KG\x1B\x45\x00\x1B\x21\x00            Ardidos..:    \x1B\x45\x010,2 %        99 KG\x1B\x45\x00\x1B\x21\x00        
+Saldo........(=):  \x1B\x45\x0148.928 KG\x1B\x45\x00\x1B\x21\x00            Quebrados:    \x1B\x45\x011,0 %       489 KG\x1B\x45\x00\x1B\x21\x00        
+Armazenagem..(-):       \x1B\x45\x010 KG\x1B\x45\x00\x1B\x21\x00            Verdes...:    \x1B\x45\x010,5 %       245 KG\x1B\x45\x00\x1B\x21\x00        
+Outros Desc..(-):       \x1B\x45\x010 KG\x1B\x45\x00\x1B\x21\x00
+Liquido......(-):  \x1B\x45\x0148.183 KG\x1B\x45\x00\x1B\x21\x00
+--------------------------------------------------------------------------------
+Observacoes.....: 
+
+plantae.agr.br                    ____________________    ____________________  
+                                        BALANCA               MOTORISTA        
+\x1B\x32
