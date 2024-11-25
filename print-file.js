@@ -1,6 +1,6 @@
-const fs = require('fs');
-const addon = require('./build/Release/addon');
-const iconv = require('iconv-lite');
+import addon from './index.cjs';
+import fs from 'fs';
+import iconv from 'iconv-lite';
 
 // Função para interpretar os comandos ESC/POS (\xXX)
 function parseEscPosCommands(text) {

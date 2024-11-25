@@ -1,3 +1,3 @@
-const addon = require('./build/Release/addon');
+import addon from './index.cjs';
 
 console.log(addon.listPrinters());

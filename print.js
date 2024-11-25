@@ -1,4 +1,4 @@
-const addon = require('./build/Release/addon');
+import addon from './index.cjs';
 
 try {
 
