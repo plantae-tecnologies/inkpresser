@@ -8,7 +8,7 @@
 class PrinterPosix : public PrinterInterface {
 public:
     std::vector<std::string> ListPrinters() override;
-    bool PrintRaw(const std::string &printer, const std::string &data) override;
+    bool PrintRaw(const std::string &printer, const std::vector<uint8_t> &data) override;
 };
 
 #endif

@@ -26,13 +26,16 @@ Napi::Value ListPrinters(const Napi::CallbackInfo& info) {
 Napi::Value PrintRaw(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
-    if (info.Length() < 2 || !info[0].IsString() || !info[1].IsString()) {
-        Napi::TypeError::New(env, "Expected two string arguments").ThrowAsJavaScriptException();
+    if (info.Length() < 2 || !info[0].IsString() || !info[1].IsBuffer()) {
+        Napi::TypeError::New(env, "Expected a string (printer) and a Buffer (data)").ThrowAsJavaScriptException();
         return env.Undefined();
     }
 
     std::string printer = info[0].As<Napi::String>();
-    std::string data = info[1].As<Napi::String>();
+
+    // Dados como Buffer
+    Napi::Buffer<uint8_t> buffer = info[1].As<Napi::Buffer<uint8_t>>();
+    std::vector<uint8_t> data(buffer.Data(), buffer.Data() + buffer.Length());
 
     try {
         auto builder = PrinterBuilder::Create();

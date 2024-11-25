@@ -8,7 +8,7 @@ class PrinterInterface {
 public:
     virtual ~PrinterInterface() = default;
     virtual std::vector<std::string> ListPrinters() = 0;
-    virtual bool PrintRaw(const std::string &printer, const std::string &data) = 0;
+    virtual bool PrintRaw(const std::string &printer, const std::vector<uint8_t> &data) = 0;
 };
 
 #endif

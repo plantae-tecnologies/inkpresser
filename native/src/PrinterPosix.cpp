@@ -28,23 +28,23 @@ vector<string> PrinterPosix::ListPrinters()
     return printers;
 }
 
-bool PrinterPosix::PrintRaw(const string &printer, const string &data)
+bool PrinterPosix::PrintRaw(const string &printer, const vector<uint8_t> &data)
 {
     // Criar um novo trabalho de impressão
     int job_id = cupsCreateJob(CUPS_HTTP_DEFAULT, printer.c_str(), "Raw Print Job", 0, nullptr);
     if (job_id == 0)
     {
-        throw runtime_error(string("Failed to create print job: ") + cupsLastErrorString());
+        throw runtime_error("Failed to create print job: " + string(cupsLastErrorString()));
     }
 
     // Iniciar o documento para o trabalho de impressão
-    if (HTTP_CONTINUE != cupsStartDocument(CUPS_HTTP_DEFAULT, printer.c_str(), job_id, "Raw Print Job", CUPS_FORMAT_RAW, 1 /* último documento */))
+    if (HTTP_CONTINUE != cupsStartDocument(CUPS_HTTP_DEFAULT, printer.c_str(), job_id, "Raw Print Job", CUPS_FORMAT_RAW, 1))
     {
-        throw runtime_error(string("Failed to start document: ") + cupsLastErrorString());
+        throw runtime_error("Failed to start document: " + string(cupsLastErrorString()));
     }
 
     // Enviar os dados diretamente
-    if (HTTP_CONTINUE != cupsWriteRequestData(CUPS_HTTP_DEFAULT, data.c_str(), data.size()))
+    if (HTTP_CONTINUE != cupsWriteRequestData(CUPS_HTTP_DEFAULT, reinterpret_cast<const char *>(data.data()), data.size()))
     {
         cupsFinishDocument(CUPS_HTTP_DEFAULT, printer.c_str());
         throw runtime_error("Failed to send print data: " + string(cupsLastErrorString()));
