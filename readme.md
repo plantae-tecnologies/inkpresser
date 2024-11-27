@@ -32,4 +32,5 @@ Tive bastante dificuldade em ler um arquivo em js e fazer a impressão correta c
 Durante os teste notei que tem alguns padrões de comandos `ESC/P`, para ativar e desativar o negrito usamos respectivamente `\x1B\x45\x01` e `\x1B\x45\x00`, porém esses comandos não são interpretados pela nossa impressora, ela apenas interpreta `\x1B\x45` e `\x1B\x46` para fazer a mesma coisa.
 Por esse motivo a antiga forma de imprimir já não funcionava mais ou funcionava em alguns clientes, pois enviamos comandos especificos para determinadas impressoras.
 
-
+# Impressão windows
+Durante os testes de impressão no Windows, foi necessário instalar o driver original da Epson ([link](https://ftp.epson.com/drivers/epson15229.exe)). Clientes com outras impressoras podem precisar de configurações adicionais, como instalação de drivers, algo fora do escopo do nosso código.
