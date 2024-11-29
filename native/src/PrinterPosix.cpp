@@ -46,7 +46,7 @@ string PrinterPosix::getDefaultPrinterName()
 
 bool PrinterPosix::printRaw(const vector<uint8_t> &data, const string &printer)
 {
-    // Verifica se uma impressora foi especificada, caso contrário, usa a padrão
+    // Checks if a printer was specified; otherwise, uses the default one
     string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
 
     if (targetPrinter.empty())

@@ -62,14 +62,14 @@ std::string PrinterWin::getDefaultPrinterName()
     return std::string(buffer.data());
 }
 
-bool PrinterWin::printRaw(const vector<uint8_t> &data, const string &printer)
+bool PrinterWin::printRaw(const std::vector<uint8_t> &data, const std::string &printer)
 {
-    // Verifica se uma impressora foi especificada, caso contrário, usa a padrão
-    string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
+    // Checks if a printer was specified; otherwise, uses the default one
+    std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
 
     if (targetPrinter.empty())
     {
-        throw runtime_error("No printer specified and no default printer is set.");
+        throw std::runtime_error("No printer specified and no default printer is set.");
     }
 
     // Open the printer

@@ -2,8 +2,8 @@ import addon from './index.cjs';
 
 try {
     
-    const data = Buffer.from('Hello, printer!');
-    const success = addon.printRaw(data, 'LX-350');
+    const data = Buffer.from("Hello, printer!\n");
+    const success = addon.printRaw(data);
 
     console.log('Print success:', success);
 
