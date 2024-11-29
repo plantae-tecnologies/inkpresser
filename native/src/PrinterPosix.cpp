@@ -6,7 +6,7 @@
 
 using namespace std;
 
-vector<string> PrinterPosix::ListPrinters()
+vector<string> PrinterPosix::getPrinters()
 {
     cups_dest_t *destinations = nullptr;
     int num_destinations = cupsGetDests(&destinations);
@@ -28,7 +28,7 @@ vector<string> PrinterPosix::ListPrinters()
     return printers;
 }
 
-bool PrinterPosix::PrintRaw(const string &printer, const vector<uint8_t> &data)
+bool PrinterPosix::printRaw(const string &printer, const vector<uint8_t> &data)
 {
     // Criar um novo trabalho de impressão
     int job_id = cupsCreateJob(CUPS_HTTP_DEFAULT, printer.c_str(), "Raw Print Job", 0, nullptr);

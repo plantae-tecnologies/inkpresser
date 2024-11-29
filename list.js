@@ -1,3 +1,3 @@
 import addon from './index.cjs';
 
-console.log(addon.listPrinters());
+console.log(addon.getPrinters());

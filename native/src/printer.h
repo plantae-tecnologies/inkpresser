@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-std::vector<std::string> listPrinters();
+std::vector<std::string> getPrinters();
 bool printRaw(const std::string &printerName, const std::string &data);
 int printFile(const std::string &filename, const std::string &docname, const std::string &printerName, const std::map<std::string, std::string> &options);
 

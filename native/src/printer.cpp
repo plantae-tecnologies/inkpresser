@@ -15,7 +15,7 @@
 #include <cups/cups.h>
 #endif
 
-std::vector<std::string> listPrinters()
+std::vector<std::string> getPrinters()
 {
     std::vector<std::string> printers;
 

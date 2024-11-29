@@ -5,7 +5,7 @@
 #include <iostream>
 #include <stdexcept>
 
-std::vector<std::string> PrinterWin::ListPrinters() {
+std::vector<std::string> PrinterWin::getPrinters() {
     DWORD needed = 0, returned = 0;
 
     // Query the required size of the buffer
@@ -32,7 +32,7 @@ std::vector<std::string> PrinterWin::ListPrinters() {
     return printers;
 }
 
-bool PrinterWin::PrintRaw(const std::string& printer, const std::vector<uint8_t>& data) {
+bool PrinterWin::printRaw(const std::string& printer, const std::vector<uint8_t>& data) {
     // Open the printer
     HANDLE hPrinter = nullptr;
     if (!OpenPrinterA(const_cast<char*>(printer.c_str()), &hPrinter, nullptr)) {
