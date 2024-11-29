@@ -5,10 +5,11 @@
 #include <vector>
 #include <string>
 
-class PrinterPosix : public PrinterInterface {
+class PrinterPosix : public PrinterInterface
+{
 public:
     std::vector<std::string> getPrinters() override;
-    bool printRaw(const std::string &printer, const std::vector<uint8_t> &data) override;
+    bool printRaw(const std::vector<uint8_t> &data, const std::string &printer = "") override;
     std::string getDefaultPrinterName() override;
 };
 

@@ -19,7 +19,7 @@ try {
     // Converta o conteúdo para CP860
     const convertedContent = iconv.encode(parsedContent, 'CP860');
 
-    const success = addon.printRaw('LX-350', convertedContent);
+    const success = addon.printRaw(convertedContent);
 
     console.log('Print success:', success);
 

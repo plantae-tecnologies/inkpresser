@@ -3,7 +3,8 @@
 #include "PrinterPosix.h"
 #include <memory>
 
-std::shared_ptr<PrinterInterface> PrinterBuilder::Create() {
+std::shared_ptr<PrinterInterface> PrinterBuilder::Create()
+{
 #ifdef _WIN32
     return std::make_shared<PrinterWin>();
 #else

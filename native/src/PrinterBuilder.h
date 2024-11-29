@@ -4,7 +4,8 @@
 #include "PrinterInterface.h"
 #include <memory>
 
-class PrinterBuilder {
+class PrinterBuilder
+{
 public:
     static std::shared_ptr<PrinterInterface> Create();
 };
