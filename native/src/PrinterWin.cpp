@@ -32,6 +32,29 @@ std::vector<std::string> PrinterWin::getPrinters() {
     return printers;
 }
 
+std::string PrinterWin::getDefaultPrinterName() {
+    // Determine the required buffer size for the default printer name
+    DWORD bufferSize = 0;
+    GetDefaultPrinterA(nullptr, &bufferSize);
+
+    // No default printer found, return an empty string
+    if (bufferSize == 0) {
+        return "";
+    }
+
+    // Allocate a buffer to hold the default printer name
+    std::vector<char> buffer(bufferSize);
+
+    // Retrieve the default printer name
+    if (!GetDefaultPrinterA(buffer.data(), &bufferSize)) {
+        // Throw an exception if retrieving the default printer fails
+        throw std::runtime_error("Failed to get default printer: " + std::to_string(GetLastError()));
+    }
+
+    // Convert the retrieved printer name to a std::string and return
+    return std::string(buffer.data());
+}
+
 bool PrinterWin::printRaw(const std::string& printer, const std::vector<uint8_t>& data) {
     // Open the printer
     HANDLE hPrinter = nullptr;
