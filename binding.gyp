@@ -5,7 +5,7 @@
       "sources": [
         "native/src/addon.cpp",
         "native/src/PrinterBuilder.cpp",
-        "native/src/PrinterInterface.cpp"
+        "native/src/PrinterInterface.h"
       ],
       "include_dirs": [
         "native/src",
