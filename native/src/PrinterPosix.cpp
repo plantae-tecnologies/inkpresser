@@ -28,6 +28,17 @@ vector<string> PrinterPosix::getPrinters()
     return printers;
 }
 
+string PrinterPosix::getDefaultPrinterName()
+{
+    const char* defaultPrinter = cupsGetDefault();
+
+    if (defaultPrinter == nullptr) {
+        return "";
+    }
+
+    return string(defaultPrinter);
+}
+
 bool PrinterPosix::printRaw(const string &printer, const vector<uint8_t> &data)
 {
     // Criar um novo trabalho de impressão
