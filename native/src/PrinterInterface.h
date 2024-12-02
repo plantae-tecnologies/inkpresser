@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "JobInfo.h"
 
 class PrinterInterface
 {
@@ -11,6 +12,7 @@ public:
     virtual std::vector<std::string> getPrinters() = 0;
     virtual bool printRaw(const std::vector<uint8_t> &data, const std::string &printer = "") = 0;
     virtual std::string getDefaultPrinterName() = 0;
+    virtual JobInfo getJob(int jobId, const std::string &printer = "") = 0;
 };
 
 #endif
