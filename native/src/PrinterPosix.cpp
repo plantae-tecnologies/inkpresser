@@ -33,7 +33,7 @@ vector<string> PrinterPosix::getPrinters()
 
 string PrinterPosix::getDefaultPrinterName()
 {
-    const char* defaultPrinter = cupsGetDefault();
+    const char *defaultPrinter = cupsGetDefault();
     return defaultPrinter ? std::string(defaultPrinter) : "";
 }
 
@@ -76,17 +76,39 @@ bool PrinterPosix::printRaw(const vector<uint8_t> &data, const string &printer)
     return true;
 }
 
-JobInfo PrinterPosix::parseJob(const cups_job_t &job, const std::string &printer) {
-    const char* stateString = ippEnumString("job-state", job.state);
-    if (!stateString) {
-        stateString = "unknown";
-    }
+JobStatus PrinterPosix::parseJobStatus(ipp_jstate_t state)
+{
+    if (state == IPP_JOB_PENDING)
+        return JobStatus::PENDING;
 
+    if (state == IPP_JOB_HELD)
+        return JobStatus::PAUSED;
+
+    if (state == IPP_JOB_PROCESSING)
+        return JobStatus::PROCESSING;
+
+    if (state == IPP_JOB_COMPLETED)
+        return JobStatus::COMPLETED;
+
+    if (state == IPP_JOB_CANCELED)
+        return JobStatus::CANCELED;
+
+    if (state == IPP_JOB_ABORTED)
+        return JobStatus::JOB_ERROR;
+
+    if (state == IPP_JOB_STOPPED)
+        return JobStatus::WAITING_FOR_DEVICE;
+
+    return JobStatus::UNKNOWN;
+}
+
+JobInfo PrinterPosix::parseJob(const cups_job_t &job, const std::string &printer)
+{
     JobInfo jobInfo;
     jobInfo.id = job.id;
     jobInfo.printer = printer;
     jobInfo.document = job.title ? job.title : "";
-    jobInfo.status = stateString;
+    jobInfo.status = to_string(parseJobStatus(job.state));
     jobInfo.user = job.user ? job.user : "";
     return jobInfo;
 }

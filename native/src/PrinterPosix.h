@@ -2,6 +2,7 @@
 #define PRINTER_POSIX_H
 
 #include "PrinterInterface.h"
+#include "JobStatus.h"
 #include <cups/cups.h>
 #include <vector>
 #include <string>
@@ -16,7 +17,7 @@ public:
     
 private:
     JobInfo parseJob(const cups_job_t &job, const std::string &printer);
-
+    JobStatus parseJobStatus(ipp_jstate_t status);
 };
 
 #endif
