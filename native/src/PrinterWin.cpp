@@ -194,3 +194,32 @@ JobInfo PrinterWin::getJob(int jobId, const std::string &printer)
 
     return job;
 }
+
+bool PrinterWin::cancelJob(int jobId, const std::string &printer)
+{
+    // Checks if a printer was specified; otherwise, uses the default one
+    std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
+
+    if (targetPrinter.empty())
+    {
+        throw std::runtime_error("No printer specified and no default printer is set.");
+    }
+
+    // Open the printer
+    HANDLE hPrinter = nullptr;
+    if (!OpenPrinterA(const_cast<char *>(targetPrinter.c_str()), &hPrinter, nullptr))
+    {
+        throw std::runtime_error("Failed to open printer: " + targetPrinter);
+    }
+
+    // Try to cancel job
+    if (!SetJobA(hPrinter, jobId, 0, nullptr, JOB_CONTROL_CANCEL))
+    {
+        ClosePrinter(hPrinter);
+        throw std::runtime_error("Failed to cancel job: " + std::to_string(GetLastError()));
+    }
+
+    // Close the printer
+    ClosePrinter(hPrinter);
+    return true;
+}

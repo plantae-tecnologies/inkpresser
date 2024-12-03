@@ -121,6 +121,37 @@ Napi::Value getJob(const Napi::CallbackInfo& info) {
     }
 }
 
+Napi::Value cancelJob(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 1 || !info[0].IsNumber())
+    {
+        Napi::TypeError::New(env, "Expected a jobId (number) as the first argument").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    int jobId = info[0].As<Napi::Number>().Int32Value();
+
+    std::string printer = "";
+    if (info.Length() > 1 && info[1].IsString())
+    {
+        printer = info[1].As<Napi::String>();
+    }
+
+    try
+    {
+        auto builder = PrinterBuilder::Create();
+        bool success = builder->cancelJob(jobId, printer);
+        return Napi::Boolean::New(env, success);
+    }
+    catch (const std::exception &e)
+    {
+        Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+}
+
 // Initialization method to export module functions
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
@@ -128,6 +159,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports.Set("getPrinters", Napi::Function::New(env, getPrinters));
     exports.Set("printRaw", Napi::Function::New(env, printRaw));
     exports.Set("getJob", Napi::Function::New(env, getJob));
+    exports.Set("cancelJob", Napi::Function::New(env, cancelJob));
     return exports;
 }
 
