@@ -1,6 +1,9 @@
 #include "PrinterBuilder.h"
+#ifdef _WIN32
 #include "PrinterWin.h"
+#else
 #include "PrinterPosix.h"
+#endif
 #include <memory>
 
 std::shared_ptr<PrinterInterface> PrinterBuilder::Create()

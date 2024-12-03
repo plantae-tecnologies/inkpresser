@@ -121,3 +121,79 @@ bool PrinterWin::printRaw(const std::vector<uint8_t> &data, const std::string &p
     // Return success if all data was written
     return bytesWritten == data.size();
 }
+
+JobStatus PrinterWin::parseJobStatus(DWORD status)
+{
+    if (status & JOB_STATUS_PAUSED)
+        return JobStatus::PAUSED;
+    if (status & JOB_STATUS_PRINTING)
+        return JobStatus::PROCESSING;
+    if (status & JOB_STATUS_SPOOLING)
+        return JobStatus::PROCESSING;
+    if (status & JOB_STATUS_PRINTED)
+        return JobStatus::COMPLETED;
+    if (status & JOB_STATUS_DELETED)
+        return JobStatus::CANCELED;
+    if (status & JOB_STATUS_ERROR || status & JOB_STATUS_BLOCKED_DEVQ || status & JOB_STATUS_USER_INTERVENTION)
+        return JobStatus::JOB_ERROR;
+    if (status & JOB_STATUS_OFFLINE || status & JOB_STATUS_PAPEROUT)
+        return JobStatus::WAITING_FOR_DEVICE;
+
+    return JobStatus::UNKNOWN;
+}
+
+JobInfo PrinterWin::parseJob(const JOB_INFO_1A &jobInfo, const std::string &printer)
+{
+    JobInfo job;
+    job.id = jobInfo.JobId;
+    job.printer = printer;
+    job.document = jobInfo.pDocument ? jobInfo.pDocument : "";
+    job.status = to_string(parseJobStatus(jobInfo.Status));
+    job.user = jobInfo.pUserName ? jobInfo.pUserName : "";
+    return job;
+}
+
+JobInfo PrinterWin::getJob(int jobId, const std::string &printer)
+{
+    // Checks if a printer was specified; otherwise, uses the default one
+    std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
+
+    if (targetPrinter.empty())
+    {
+        throw std::runtime_error("No printer specified and no default printer is set.");
+    }
+
+    // Open the printer
+    HANDLE hPrinter = nullptr;
+    if (!OpenPrinterA(const_cast<char *>(targetPrinter.c_str()), &hPrinter, nullptr))
+    {
+        throw std::runtime_error("Failed to open printer: " + targetPrinter);
+    }
+
+    // Determine the required buffer size for job information
+    DWORD needed = 0;
+    GetJobA(hPrinter, jobId, 1, nullptr, 0, &needed);
+
+    if (needed == 0)
+    {
+        ClosePrinter(hPrinter);
+        throw std::runtime_error("Job not found or failed to retrieve job details.");
+    }
+
+    // Allocate buffer and retrieve job information
+    std::vector<BYTE> buffer(needed);
+    if (!GetJobA(hPrinter, jobId, 1, buffer.data(), needed, &needed))
+    {
+        ClosePrinter(hPrinter);
+        throw std::runtime_error("Failed to retrieve job details: " + std::to_string(GetLastError()));
+    }
+
+    // Parse the job information
+    auto jobInfo = reinterpret_cast<JOB_INFO_1A *>(buffer.data());
+    JobInfo job = parseJob(*jobInfo, targetPrinter);
+
+    // Close the printer
+    ClosePrinter(hPrinter);
+
+    return job;
+}

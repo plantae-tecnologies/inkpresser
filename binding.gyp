@@ -8,7 +8,6 @@
         "native/src/PrinterInterface.h"
       ],
       "include_dirs": [
-        "native/src",
         "<!(node -p \"require('node-addon-api').include\")"
       ],
       "dependencies": [
