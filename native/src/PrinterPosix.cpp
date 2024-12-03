@@ -139,3 +139,22 @@ JobInfo PrinterPosix::getJob(int jobId, const std::string &printer)
     cupsFreeJobs(numJobs, jobs);
     throw std::runtime_error("Job not found.");
 }
+
+bool PrinterPosix::cancelJob(int jobId, const std::string &printer)
+{
+    // Checks if a printer was specified; otherwise, uses the default one
+    std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
+
+    if (targetPrinter.empty())
+    {
+        throw std::runtime_error("No printer specified and no default printer is set.");
+    }
+
+    // Try to cancel job
+    if (!cupsCancelJob(targetPrinter.c_str(), jobId))
+    {
+        throw std::runtime_error("Failed to cancel job: " + std::string());
+    }
+
+    return true;
+}
