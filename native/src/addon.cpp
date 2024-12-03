@@ -78,8 +78,8 @@ Napi::Value printRaw(const Napi::CallbackInfo &info)
     try
     {
         auto builder = PrinterBuilder::Create();
-        bool success = builder->printRaw(data, printer);
-        return Napi::Boolean::New(env, success);
+        int jobId = builder->printRaw(data, printer);
+        return Napi::Number::New(env, jobId);
     }
     catch (const std::exception &e)
     {

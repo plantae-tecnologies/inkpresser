@@ -37,7 +37,7 @@ string PrinterPosix::getDefaultPrinterName()
     return defaultPrinter ? std::string(defaultPrinter) : "";
 }
 
-bool PrinterPosix::printRaw(const vector<uint8_t> &data, const string &printer)
+int PrinterPosix::printRaw(const vector<uint8_t> &data, const string &printer)
 {
     // Checks if a printer was specified; otherwise, uses the default one
     string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
@@ -73,7 +73,7 @@ bool PrinterPosix::printRaw(const vector<uint8_t> &data, const string &printer)
         throw runtime_error("Failed to finish document: " + string(cupsLastErrorString()));
     }
 
-    return true;
+    return job_id;
 }
 
 JobStatus PrinterPosix::parseJobStatus(ipp_jstate_t state)

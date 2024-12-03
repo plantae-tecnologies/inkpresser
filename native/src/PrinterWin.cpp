@@ -62,7 +62,7 @@ std::string PrinterWin::getDefaultPrinterName()
     return std::string(buffer.data());
 }
 
-bool PrinterWin::printRaw(const std::vector<uint8_t> &data, const std::string &printer)
+int PrinterWin::printRaw(const std::vector<uint8_t> &data, const std::string &printer)
 {
     // Checks if a printer was specified; otherwise, uses the default one
     std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
@@ -111,15 +111,12 @@ bool PrinterWin::printRaw(const std::vector<uint8_t> &data, const std::string &p
         throw std::runtime_error("Failed to write data to printer: " + targetPrinter);
     }
 
-    // End the print page and the job
+    // Finish resources
     EndPagePrinter(hPrinter);
     EndDocPrinter(hPrinter);
-
-    // Close the printer
     ClosePrinter(hPrinter);
 
-    // Return success if all data was written
-    return bytesWritten == data.size();
+    return jobId;
 }
 
 JobStatus PrinterWin::parseJobStatus(DWORD status)
