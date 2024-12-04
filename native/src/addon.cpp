@@ -88,6 +88,42 @@ Napi::Value printRaw(const Napi::CallbackInfo &info)
     }
 }
 
+Napi::Value getJobs(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+
+    std::string printer = "";
+    if (info.Length() > 0 && info[0].IsString())
+    {
+        printer = info[0].As<Napi::String>();
+    }
+
+    try
+    {
+        auto builder = PrinterBuilder::Create();
+        auto jobs = builder->getJobs(printer);
+
+        Napi::Array result = Napi::Array::New(env, jobs.size());
+        for (size_t i = 0; i < jobs.size(); ++i)
+        {
+            Napi::Object jobObj = Napi::Object::New(env);
+            jobObj.Set("id", Napi::Number::New(env, jobs[i].id));
+            jobObj.Set("printer", Napi::String::New(env, jobs[i].printer));
+            jobObj.Set("document", Napi::String::New(env, jobs[i].document));
+            jobObj.Set("status", Napi::String::New(env, jobs[i].status));
+            jobObj.Set("user", Napi::String::New(env, jobs[i].user));
+            result[i] = jobObj;
+        }
+
+        return result;
+    }
+    catch (const std::exception &e)
+    {
+        Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+}
+
 Napi::Value getJob(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
@@ -158,6 +194,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports.Set("getDefaultPrinterName", Napi::Function::New(env, getDefaultPrinterName));
     exports.Set("getPrinters", Napi::Function::New(env, getPrinters));
     exports.Set("printRaw", Napi::Function::New(env, printRaw));
+    exports.Set("getJobs", Napi::Function::New(env, getJobs));
     exports.Set("getJob", Napi::Function::New(env, getJob));
     exports.Set("cancelJob", Napi::Function::New(env, cancelJob));
     return exports;
