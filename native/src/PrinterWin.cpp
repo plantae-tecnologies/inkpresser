@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <vector>
 #include <string>
-#include <iostream>
 #include <stdexcept>
 
 std::vector<std::string> PrinterWin::getPrinters()
@@ -62,7 +61,7 @@ std::string PrinterWin::getDefaultPrinterName()
     return std::string(buffer.data());
 }
 
-int PrinterWin::printRaw(const std::vector<uint8_t> &data, const std::string &printer)
+int PrinterWin::printRaw(const std::vector<uint8_t> &data, const std::string &documentName, const std::string &printer)
 {
     // Checks if a printer was specified; otherwise, uses the default one
     std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
@@ -81,7 +80,7 @@ int PrinterWin::printRaw(const std::vector<uint8_t> &data, const std::string &pr
 
     // Configure the print job
     DOC_INFO_1A docInfo = {};
-    docInfo.pDocName = const_cast<char *>("Raw Print Job");
+    docInfo.pDocName = const_cast<char *>(documentName.c_str());
     docInfo.pOutputFile = nullptr;
     docInfo.pDatatype = const_cast<char *>("RAW");
 
