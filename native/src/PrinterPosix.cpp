@@ -102,11 +102,11 @@ JobStatus PrinterPosix::parseJobStatus(ipp_jstate_t state)
     return JobStatus::UNKNOWN;
 }
 
-JobInfo PrinterPosix::parseJob(const cups_job_t &job, const std::string &printer)
+JobInfo PrinterPosix::parseJob(const cups_job_t &job)
 {
     JobInfo jobInfo;
     jobInfo.id = job.id;
-    jobInfo.printer = printer;
+    jobInfo.printer = job.dest ? job.dest : "";
     jobInfo.document = job.title ? job.title : "";
     jobInfo.status = to_string(parseJobStatus(job.state));
     jobInfo.user = job.user ? job.user : "";
@@ -129,7 +129,7 @@ std::vector<JobInfo> PrinterPosix::getJobs(const std::string &printer)
     std::vector<JobInfo> jobList;
     for (int i = 0; i < numJobs; ++i)
     {
-        jobList.push_back(parseJob(jobs[i], targetPrinter));
+        jobList.push_back(parseJob(jobs[i]));
     }
 
     cupsFreeJobs(numJobs, jobs);
@@ -153,7 +153,7 @@ JobInfo PrinterPosix::getJob(int jobId, const std::string &printer)
     {
         if (jobs[i].id == jobId)
         {
-            JobInfo job = parseJob(jobs[i], targetPrinter);
+            JobInfo job = parseJob(jobs[i]);
             cupsFreeJobs(numJobs, jobs);
             return job;
         }

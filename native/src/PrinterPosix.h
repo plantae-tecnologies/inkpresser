@@ -18,7 +18,7 @@ public:
     bool cancelJob(int jobId, const std::string &printer = "") override;
     
 private:
-    JobInfo parseJob(const cups_job_t &job, const std::string &printer);
+    JobInfo parseJob(const cups_job_t &job);
     JobStatus parseJobStatus(ipp_jstate_t status);
 };
 
