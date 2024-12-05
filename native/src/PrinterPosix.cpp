@@ -37,40 +37,40 @@ string PrinterPosix::getDefaultPrinterName()
     return defaultPrinter ? std::string(defaultPrinter) : "";
 }
 
-int PrinterPosix::printRaw(const vector<uint8_t> &data, const string &printer)
+int PrinterPosix::printRaw(const std::vector<uint8_t> &data, const std::string &documentName, const std::string &printer)
 {
     // Checks if a printer was specified; otherwise, uses the default one
-    string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
+    std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
 
     if (targetPrinter.empty())
     {
-        throw runtime_error("No printer specified and no default printer is set.");
+        throw std::runtime_error("No printer specified and no default printer is set.");
     }
 
     // Create a new print job
-    int job_id = cupsCreateJob(CUPS_HTTP_DEFAULT, targetPrinter.c_str(), "Raw Print Job", 0, nullptr);
+    int job_id = cupsCreateJob(CUPS_HTTP_DEFAULT, targetPrinter.c_str(), documentName.c_str(), 0, nullptr);
     if (job_id == 0)
     {
-        throw runtime_error("Failed to create print job: " + string(cupsLastErrorString()));
+        throw std::runtime_error("Failed to create print job: " + std::string(cupsLastErrorString()));
     }
 
     // Start the document for the print job
-    if (HTTP_CONTINUE != cupsStartDocument(CUPS_HTTP_DEFAULT, targetPrinter.c_str(), job_id, "Raw Print Job", CUPS_FORMAT_RAW, 1))
+    if (HTTP_CONTINUE != cupsStartDocument(CUPS_HTTP_DEFAULT, targetPrinter.c_str(), job_id, documentName.c_str(), CUPS_FORMAT_RAW, 1))
     {
-        throw runtime_error("Failed to start document: " + string(cupsLastErrorString()));
+        throw std::runtime_error("Failed to start document: " + std::string(cupsLastErrorString()));
     }
 
     // Send the raw data to the printer
     if (HTTP_CONTINUE != cupsWriteRequestData(CUPS_HTTP_DEFAULT, reinterpret_cast<const char *>(data.data()), data.size()))
     {
         cupsFinishDocument(CUPS_HTTP_DEFAULT, targetPrinter.c_str());
-        throw runtime_error("Failed to send print data: " + string(cupsLastErrorString()));
+        throw std::runtime_error("Failed to send print data: " + std::string(cupsLastErrorString()));
     }
 
     // Finalize the document to complete the print job
     if (IPP_STATUS_OK != cupsFinishDocument(CUPS_HTTP_DEFAULT, targetPrinter.c_str()))
     {
-        throw runtime_error("Failed to finish document: " + string(cupsLastErrorString()));
+        throw std::runtime_error("Failed to finish document: " + std::string(cupsLastErrorString()));
     }
 
     return job_id;
