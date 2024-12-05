@@ -18,7 +18,7 @@ public:
     bool cancelJob(int jobId, const std::string &printer = "") override;
 
 private:
-    JobInfo parseJob(const JOB_INFO_1A &jobInfo, const std::string &printer);
+    JobInfo parseJob(const JOB_INFO_1A &jobInfo);
     JobStatus parseJobStatus(DWORD status);
 };
 

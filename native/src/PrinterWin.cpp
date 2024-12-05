@@ -123,9 +123,9 @@ JobStatus PrinterWin::parseJobStatus(DWORD status)
 {
     if (status & JOB_STATUS_PAUSED)
         return JobStatus::PAUSED;
-    if (status & JOB_STATUS_PRINTING)
-        return JobStatus::PROCESSING;
     if (status & JOB_STATUS_SPOOLING)
+        return JobStatus::PENDING;
+    if (status & JOB_STATUS_PRINTING)
         return JobStatus::PROCESSING;
     if (status & JOB_STATUS_PRINTED)
         return JobStatus::COMPLETED;
@@ -139,11 +139,11 @@ JobStatus PrinterWin::parseJobStatus(DWORD status)
     return JobStatus::UNKNOWN;
 }
 
-JobInfo PrinterWin::parseJob(const JOB_INFO_1A &jobInfo, const std::string &printer)
+JobInfo PrinterWin::parseJob(const JOB_INFO_1A &jobInfo)
 {
     JobInfo job;
     job.id = jobInfo.JobId;
-    job.printer = printer;
+    job.printer = jobInfo.pPrinterName ? jobInfo.pPrinterName : "";
     job.document = jobInfo.pDocument ? jobInfo.pDocument : "";
     job.status = to_string(parseJobStatus(jobInfo.Status));
     job.user = jobInfo.pUserName ? jobInfo.pUserName : "";
@@ -186,7 +186,7 @@ std::vector<JobInfo> PrinterWin::getJobs(const std::string &printer)
     std::vector<JobInfo> jobList;
     for (DWORD i = 0; i < returned; ++i)
     {
-        jobList.push_back(parseJob(jobInfo[i], targetPrinter));
+        jobList.push_back(parseJob(jobInfo[i]));
     }
 
     ClosePrinter(hPrinter);
@@ -230,7 +230,7 @@ JobInfo PrinterWin::getJob(int jobId, const std::string &printer)
 
     // Parse the job information
     auto jobInfo = reinterpret_cast<JOB_INFO_1A *>(buffer.data());
-    JobInfo job = parseJob(*jobInfo, targetPrinter);
+    JobInfo job = parseJob(*jobInfo);
 
     // Close the printer
     ClosePrinter(hPrinter);
