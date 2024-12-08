@@ -10,7 +10,7 @@
 class PrinterPosix : public PrinterInterface
 {
 public:
-    std::vector<std::string> getPrinters() override;
+    std::vector<PrinterInfo> getPrinters() override;
     int printRaw(const std::vector<uint8_t> &data, const std::string &documentName, const std::string &printer = "") override;
     std::string getDefaultPrinterName() override;
     std::vector<JobInfo> getJobs(const std::string &printer = "") override;
@@ -18,6 +18,7 @@ public:
     bool cancelJob(int jobId, const std::string &printer = "") override;
     
 private:
+    PrinterInfo parsePrinter(const cups_dest_t &dest);
     JobInfo parseJob(const cups_job_t &job);
     JobStatus parseJobStatus(ipp_jstate_t status);
 };

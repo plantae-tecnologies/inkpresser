@@ -6,28 +6,23 @@
 
 using namespace std;
 
-vector<string> PrinterPosix::getPrinters()
+std::vector<PrinterInfo> PrinterPosix::getPrinters()
 {
-    cups_dest_t *destinations = nullptr;
-    int num_destinations = cupsGetDests(&destinations);
+    cups_dest_t *dests = nullptr;
+    int numDests = cupsGetDests(&dests);
 
-    if (num_destinations <= 0)
+    if (numDests <= 0)
     {
-        // Clean up and return an empty list if no printers are found
-        cupsFreeDests(num_destinations, destinations);
         return {};
     }
 
-    // Convert each CUPS destination to a standard string and store in the list
-    vector<string> printers;
-    printers.reserve(num_destinations);
-    for (int i = 0; i < num_destinations; ++i)
+    std::vector<PrinterInfo> printers;
+    for (int i = 0; i < numDests; ++i)
     {
-        printers.emplace_back(destinations[i].name);
+        printers.push_back(parsePrinter(dests[i]));
     }
 
-    // Free resources allocated by CUPS
-    cupsFreeDests(num_destinations, destinations);
+    cupsFreeDests(numDests, dests);
     return printers;
 }
 
@@ -74,6 +69,13 @@ int PrinterPosix::printRaw(const std::vector<uint8_t> &data, const std::string &
     }
 
     return job_id;
+}
+
+PrinterInfo PrinterPosix::parsePrinter(const cups_dest_t &dest)
+{
+    PrinterInfo info;
+    info.name = dest.name;
+    return info;
 }
 
 JobStatus PrinterPosix::parseJobStatus(ipp_jstate_t state)
