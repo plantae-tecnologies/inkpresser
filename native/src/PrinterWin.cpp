@@ -4,7 +4,7 @@
 #include <string>
 #include <stdexcept>
 
-std::vector<std::string> PrinterWin::getPrinters()
+std::vector<PrinterInfo> PrinterWin::getPrinters()
 {
     DWORD needed = 0, returned = 0;
 
@@ -25,11 +25,11 @@ std::vector<std::string> PrinterWin::getPrinters()
         throw std::runtime_error("Failed to enumerate printers.");
     }
 
-    // Collect printer names
-    std::vector<std::string> printers;
+    // Encapsulate printers
+    std::vector<PrinterInfo> printers;
     for (DWORD i = 0; i < returned; ++i)
     {
-        printers.emplace_back(printerInfo[i].pPrinterName);
+        printers.push_back(parsePrinter(printerInfo[i]));
     }
 
     return printers;
@@ -116,6 +116,13 @@ int PrinterWin::printRaw(const std::vector<uint8_t> &data, const std::string &do
     ClosePrinter(hPrinter);
 
     return jobId;
+}
+
+PrinterInfo PrinterWin::parsePrinter(const PRINTER_INFO_2 &printerInfo)
+{
+    PrinterInfo info;
+    info.name = printerInfo.pPrinterName ? printerInfo.pPrinterName : "";
+    return info;
 }
 
 JobStatus PrinterWin::parseJobStatus(DWORD status)

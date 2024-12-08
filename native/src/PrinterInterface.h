@@ -4,12 +4,13 @@
 #include <string>
 #include <vector>
 #include "JobInfo.h"
+#include "PrinterInfo.h"
 
 class PrinterInterface
 {
 public:
     virtual ~PrinterInterface() = default;
-    virtual std::vector<std::string> getPrinters() = 0;
+    virtual std::vector<PrinterInfo> getPrinters() = 0;
     virtual int printRaw(const std::vector<uint8_t> &data, const std::string &documentName, const std::string &printer = "") = 0;
     virtual std::string getDefaultPrinterName() = 0;
     virtual std::vector<JobInfo> getJobs(const std::string &printer = "") = 0;

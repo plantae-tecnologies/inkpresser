@@ -33,7 +33,6 @@ Napi::Value getPrinters(const Napi::CallbackInfo &info)
 
     try
     {
-        // Create a PrinterBuilder instance
         auto builder = PrinterBuilder::Create();
         auto printers = builder->getPrinters();
 
@@ -41,9 +40,11 @@ Napi::Value getPrinters(const Napi::CallbackInfo &info)
         Napi::Array result = Napi::Array::New(env, printers.size());
         for (size_t i = 0; i < printers.size(); ++i)
         {
-            result[i] = Napi::String::New(env, printers[i]);
+            Napi::Object printerObj = Napi::Object::New(env);
+            printerObj.Set("name", printers[i].name);
+            result[i] = printerObj;
         }
-        // Return the array of printers
+
         return result;
     }
     catch (const std::exception &e)
