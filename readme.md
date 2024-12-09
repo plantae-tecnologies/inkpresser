@@ -1,42 +1,75 @@
-# InkPress
+# InkPresser
+A Node.js library for handling printers and print jobs, with easy integration across modern Node.js and Electron versions.
 
+## Installation
+InkPresser uses `node-gyp` for building native bindings during installation. Make sure your environment has the necessary dependencies, such as Python and a compatible C++ compiler (e.g., GCC on Linux, Build Tools for Visual Studio on Windows). 
 
-
-## Build
-
+Install it via GitHub:
 ```bash
-npm run rebuild
+npm i github:plantae-tecnologies/inkpress
 ```
 
-## Notes
+## Usage
 
-Notas sobre o desenvolvimento
+Here’s how you can use:
 
-### Node-api
-A migração do NAN para a Node-API aconteceu porque esta última oferece uma abstração estável e independente da versão do Node.js, reduzindo a necessidade de reescrever ou recompilar módulos nativos a cada atualização do Node.
+### List Available Printers
+```typescript
+import { PrintManager } from 'inkpresser';
+const manager = new PrintManager();
 
-### Import .node
-Arquivos .node são módulos nativos compilados que seguem o padrão CommonJS e não suportam o sistema ES Modules (ESM) diretamente. Como o Node.js trata ESM e CJS de forma diferente, tentar importar diretamente um .node em um ambiente ESM gera erros.
-
-Para contornar isso, usamos um arquivo intermediário (index.cjs) que importa o .node usando CommonJS e exporta suas funcionalidades de maneira compatível com os ES Modules. Isso garante que tanto o ambiente ESM quanto o CJS consigam acessar o módulo nativo sem problemas.
-
-
-
-### Charsets
-Tive bastante dificuldade em ler um arquivo em js e fazer a impressão correta com caracteres especiais. O que acontece é que geralmente arquivos ficam salvos no pc em `utf-8` e a impressora está configurada em `pc-860`. Ao tentar enviar uma impressão em modo raw, não existe tratamento de charset, por isso a impressora não imprime corretamente.
-
-É necessário carregar o arquivo de template e fazer conversão usando algo como a lib `iconv-lite` para transformar o texto em um `buffer` e não perder a codificação ao chegar no c++;
-
-
-### Comandos ESC/P
-Durante os teste notei que tem alguns padrões de comandos `ESC/P`, para ativar e desativar o negrito usamos respectivamente `\x1B\x45\x01` e `\x1B\x45\x00`, porém esses comandos não são interpretados pela nossa impressora, ela apenas interpreta `\x1B\x45` e `\x1B\x46` para fazer a mesma coisa.
-Por esse motivo a antiga forma de imprimir já não funcionava mais ou funcionava em alguns clientes, pois enviamos comandos especificos para determinadas impressoras.
-
-### Builds para versão 12
-Para compilar em versões antigas do Node.js (como v12), é necessário o Python 2.7, pois algumas dependências utilizam node-gyp, que requer essa versão. Certifique-se de ter o Python 2.7 instalado e defina seu caminho com o comando abaixo:
-```sh
-npm config set python "C:\Python27\python.exe"
+const printers = await manager.getPrinters();
+// output: [{ name: "Printer1" }, { name: "Printer2" }]
 ```
 
-### Impressão windows
-Durante os testes de impressão no Windows, foi necessário instalar o driver original da Epson ([link](https://ftp.epson.com/drivers/epson15229.exe)). Clientes com outras impressoras podem precisar de configurações adicionais, como instalação de drivers, algo fora do escopo do nosso código.
+### Get the Default Printer
+```typescript
+import { PrintManager } from 'inkpresser';
+const manager = new PrintManager();
+
+const defaultPrinter = await manager.getDefaultPrinter();
+// output: { name: "DefaultPrinter" }
+```
+
+### Print a Document
+```typescript
+import { PrintManager } from 'inkpresser';
+const manager = new PrintManager();
+
+const printers = await manager.getPrinters();
+const printer = printers[0];
+
+const document = Buffer.from('Hello, printer!');
+const jobId = await printer.printRaw(document, 'SampleDocument');
+// output: 200
+```
+
+### Manage Print Jobs
+```typescript
+import { PrintManager } from 'inkpresser';
+const manager = new PrintManager();
+
+const printers = await manager.getPrinters();
+const printer = printers[0];
+
+const jobs = await printer.getJobs();
+// output: [
+//   { id: 1, printer: { name: "Printer1" }, document: "Document1", status: "queued", user: "user1" },
+//   { id: 2, printer: { name: "Printer1" }, document: "Document2", status: "printing", user: "user1" }
+// ]
+
+const cancelResult = await jobs[0]?.cancel();
+// output: true
+```
+
+### Get a Job by ID
+```typescript
+import { PrintManager } from 'inkpresser';
+const manager = new PrintManager();
+
+const printers = await manager.getPrinters();
+const printer = printers[0];
+
+const job = await printer.getJob(1);
+// output: { id: 1, printer: { name: "Printer1" }, document: "Document1", status: "queued", user: "user1" }
+```
