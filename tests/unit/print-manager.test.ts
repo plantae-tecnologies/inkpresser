@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { PrintManager } from '../../src/print-manager.ts';
-import { Printer } from '../../src/printer.ts';
+import { PrintManager } from '../../src/print-manager';
+import { Printer } from '../../src/printer';
 
-vi.mock('../src/bindings.ts', () => ({
+vi.mock('../../src/bindings', () => ({
     default: {
         getPrinters: vi.fn(() => [{ name: 'Printer1' }, { name: 'Printer2' }]),
         getDefaultPrinterName: vi.fn(() => 'DefaultPrinter'),

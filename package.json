@@ -2,10 +2,9 @@
   "name": "inkpress",
   "version": "1.0.0",
   "main": "./src/index.ts",
-  "type": "module",
   "scripts": {
     "build": "node-gyp configure build && tsc",
-    "clean": "rmdir /s /q build || rm -rf build",
+    "clean": "rmdir /s /q build dist || rm -rf build dist",
     "rebuild": "npm run clean && npm run build",
     "test": "vitest tests/unit",
     "test:coverage": "vitest tests/unit --coverage",

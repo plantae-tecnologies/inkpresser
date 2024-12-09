@@ -1,3 +1,3 @@
-export { PrintManager } from './print-manager.ts';
-export { Printer } from './printer.ts';
-export { Job } from './job.ts';
+export { PrintManager } from './print-manager';
+export { Printer } from './printer';
+export { Job } from './job';

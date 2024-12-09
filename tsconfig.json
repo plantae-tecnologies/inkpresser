@@ -6,13 +6,12 @@
         "strict": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "allowImportingTsExtensions": true,
-        "noEmit": true,
         "outDir": "dist",
-        "rootDir": "./",
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
     },
     "include": [
-        "src/**/*",
-        "tests/**/*"
+        "src/**/*"
     ]
 }

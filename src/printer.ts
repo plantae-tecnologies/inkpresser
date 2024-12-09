@@ -1,6 +1,6 @@
-import { JobInfo, PrinterInfo } from './types.ts';
-import bindings from './bindings.ts';
-import { Job } from './job.ts';
+import { JobInfo, PrinterInfo } from './types';
+import bindings from './bindings';
+import { Job } from './job';
 
 export class Printer {
     name: string;

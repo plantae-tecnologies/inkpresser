@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PrintManager } from '../../src/index.ts';
+import { PrintManager } from '../../src/index';
 import fs from 'fs';
 import iconv from 'iconv-lite';
 

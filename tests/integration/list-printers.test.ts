@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PrintManager } from '../../src/index.ts';
+import { PrintManager } from '../../src/index';
 
 describe('Integration: PrintManager', () => {
     it('should list the printers available on the system', async () => {

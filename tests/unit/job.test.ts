@@ -1,9 +1,9 @@
 import { beforeEach, describe, it, expect, vi } from 'vitest';
-import bindings from '../../src/bindings.ts';
-import { Printer } from '../../src/printer.ts';
-import { Job } from '../../src/job.ts';
+import bindings from '../../src/bindings';
+import { Printer } from '../../src/printer';
+import { Job } from '../../src/job';
 
-vi.mock('../src/bindings.ts', () => ({
+vi.mock('../../src/bindings', () => ({
     default: {
         cancelJob: vi.fn((jobId, printerName) => true)
     },

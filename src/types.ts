@@ -1,4 +1,4 @@
-import { Printer } from './printer.ts';
+import { Printer } from './printer';
 
 export type PrinterInfo = {
     name: string;

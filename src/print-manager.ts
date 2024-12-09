@@ -1,6 +1,6 @@
-import bindings from './bindings.ts';
-import { PrinterInfo } from './types.ts';
-import { Printer } from './printer.ts';
+import bindings from './bindings';
+import { PrinterInfo } from './types';
+import { Printer } from './printer';
 
 export class PrintManager {
     async getPrinters(): Promise<Printer[]> {
