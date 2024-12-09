@@ -1,7 +1,7 @@
 import { beforeEach, describe, it, expect, vi } from 'vitest';
-import bindings from '../src/bindings.ts';
-import { Printer } from '../src/printer.ts';
-import { Job } from '../src/job.ts';
+import bindings from '../../src/bindings.ts';
+import { Printer } from '../../src/printer.ts';
+import { Job } from '../../src/job.ts';
 
 vi.mock('../src/bindings.ts', () => ({
     default: {

@@ -7,19 +7,18 @@
     "build": "node-gyp configure build && tsc",
     "clean": "rmdir /s /q build || rm -rf build",
     "rebuild": "npm run clean && npm run build",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage"
+    "test": "vitest tests/unit",
+    "test:coverage": "vitest tests/unit --coverage",
+    "test:integration": "vitest tests/integration --no-watch"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",
+    "@vitest/coverage-v8": "^2.1.8",
+    "iconv-lite": "^0.6.3",
+    "node-addon-api": "^8.3.0",
     "node-gyp": "^10.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
-  },
-  "dependencies": {
-    "@vitest/coverage-v8": "^2.1.8",
-    "iconv-lite": "^0.6.3",
-    "node-addon-api": "^8.2.2"
   }
 }
