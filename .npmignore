@@ -1,0 +1,6 @@
+tests/
+src/
+build/
+coverage/
+tsconfig.json
+package-lock.json
