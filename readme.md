@@ -6,7 +6,7 @@ InkPresser uses `node-gyp` for building native bindings during installation. Mak
 
 Install it via GitHub:
 ```bash
-npm i github:plantae-tecnologies/inkpress
+npm i github:plantae-tecnologies/inkpresser
 ```
 
 ## Usage
