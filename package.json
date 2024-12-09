@@ -5,6 +5,7 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**/*",
+    "native/**/*",
     "binding.gyp",
     "README.md",
     "LICENSE"
