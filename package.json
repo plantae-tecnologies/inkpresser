@@ -1,6 +1,7 @@
 {
   "name": "inkpresser",
   "version": "1.0.0",
+  "description": "A Node.js library for managing printers and print jobs with Electron integration.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
