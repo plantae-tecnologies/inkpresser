@@ -140,28 +140,17 @@ std::vector<JobInfo> PrinterPosix::getJobs(const std::string &printer)
 
 std::optional<JobInfo> PrinterPosix::getJob(int jobId, const std::string &printer)
 {
-    // Checks if a printer was specified; otherwise, uses the default one
-    std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
+    auto allJobs = getJobs(printer);
 
-    if (targetPrinter.empty())
+    // Look for the specific jobId in the fetched jobs
+    for (const auto &job : allJobs)
     {
-        throw std::runtime_error("No printer specified and no default printer is set.");
-    }
-
-    cups_job_t *jobs = nullptr;
-    int numJobs = cupsGetJobs(&jobs, targetPrinter.c_str(), 0, CUPS_WHICHJOBS_ACTIVE);
-
-    for (int i = 0; i < numJobs; ++i)
-    {
-        if (jobs[i].id == jobId)
+        if (job.id == jobId)
         {
-            JobInfo job = parseJob(jobs[i]);
-            cupsFreeJobs(numJobs, jobs);
             return job;
         }
     }
 
-    cupsFreeJobs(numJobs, jobs);
     return std::nullopt;
 }
 
