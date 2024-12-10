@@ -199,7 +199,7 @@ std::vector<JobInfo> PrinterWin::getJobs(const std::string &printer)
     return jobList;
 }
 
-JobInfo PrinterWin::getJob(int jobId, const std::string &printer)
+std::optional<JobInfo> PrinterWin::getJob(int jobId, const std::string &printer)
 {
     // Checks if a printer was specified; otherwise, uses the default one
     std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
@@ -223,7 +223,7 @@ JobInfo PrinterWin::getJob(int jobId, const std::string &printer)
     if (needed == 0)
     {
         ClosePrinter(hPrinter);
-        throw std::runtime_error("Job not found or failed to retrieve job details.");
+        return std::nullopt;
     }
 
     // Allocate buffer and retrieve job information
@@ -231,7 +231,7 @@ JobInfo PrinterWin::getJob(int jobId, const std::string &printer)
     if (!GetJobA(hPrinter, jobId, 1, buffer.data(), needed, &needed))
     {
         ClosePrinter(hPrinter);
-        throw std::runtime_error("Failed to retrieve job details: " + std::to_string(GetLastError()));
+        return std::nullopt;
     }
 
     // Parse the job information

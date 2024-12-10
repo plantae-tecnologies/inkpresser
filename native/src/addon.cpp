@@ -149,14 +149,19 @@ Napi::Value getJob(const Napi::CallbackInfo &info)
     try
     {
         auto builder = PrinterBuilder::Create();
-        JobInfo jobInfo = builder->getJob(jobId, printer);
+        std::optional<JobInfo> jobInfo = builder->getJob(jobId, printer);
+
+        if (!jobInfo)
+        {
+            return env.Null();
+        }
 
         Napi::Object jsObject = Napi::Object::New(env);
-        jsObject.Set("id", Napi::Number::New(env, jobInfo.id));
-        jsObject.Set("printer", Napi::String::New(env, jobInfo.printer));
-        jsObject.Set("document", Napi::String::New(env, jobInfo.document));
-        jsObject.Set("status", Napi::String::New(env, jobInfo.status));
-        jsObject.Set("user", Napi::String::New(env, jobInfo.user));
+        jsObject.Set("id", Napi::Number::New(env, jobInfo->id));
+        jsObject.Set("printer", Napi::String::New(env, jobInfo->printer));
+        jsObject.Set("document", Napi::String::New(env, jobInfo->document));
+        jsObject.Set("status", Napi::String::New(env, jobInfo->status));
+        jsObject.Set("user", Napi::String::New(env, jobInfo->user));
 
         return jsObject;
     }
