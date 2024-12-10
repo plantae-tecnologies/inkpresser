@@ -7,18 +7,17 @@ Napi::Value getDefaultPrinterName(const Napi::CallbackInfo &info)
 
     try
     {
-        // Create a PrinterBuilder instance
         auto builder = PrinterBuilder::Create();
-        std::string defaultPrinter = builder->getDefaultPrinterName();
+        auto defaultPrinterOpt = builder->getDefaultPrinterName();
 
         // If no default printer is found, return null
-        if (defaultPrinter.empty())
+        if (!defaultPrinterOpt)
         {
             return env.Null();
         }
 
         // Return the default printer name as a string
-        return Napi::String::New(env, defaultPrinter);
+        return Napi::String::New(env, *defaultPrinterOpt);
     }
     catch (const std::exception &e)
     {
@@ -73,7 +72,7 @@ Napi::Value printRaw(const Napi::CallbackInfo &info)
     std::string documentName = info[1].As<Napi::String>();
 
     // Get the printer name (optional)
-    std::string printer = "";
+    std::optional<std::string> printer = std::nullopt;
     if (info.Length() > 2 && info[2].IsString())
     {
         printer = info[2].As<Napi::String>();
@@ -96,7 +95,7 @@ Napi::Value getJobs(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
 
-    std::string printer = "";
+    std::optional<std::string> printer = std::nullopt;
     if (info.Length() > 0 && info[0].IsString())
     {
         printer = info[0].As<Napi::String>();
@@ -140,7 +139,7 @@ Napi::Value getJob(const Napi::CallbackInfo &info)
 
     int jobId = info[0].As<Napi::Number>().Int32Value();
 
-    std::string printer = "";
+    std::optional<std::string> printer = std::nullopt;
     if (info.Length() > 1 && info[1].IsString())
     {
         printer = info[1].As<Napi::String>();
@@ -184,7 +183,7 @@ Napi::Value cancelJob(const Napi::CallbackInfo &info)
 
     int jobId = info[0].As<Napi::Number>().Int32Value();
 
-    std::string printer = "";
+    std::optional<std::string> printer = std::nullopt;
     if (info.Length() > 1 && info[1].IsString())
     {
         printer = info[1].As<Napi::String>();

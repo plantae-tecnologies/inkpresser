@@ -26,31 +26,31 @@ std::vector<PrinterInfo> PrinterPosix::getPrinters()
     return printers;
 }
 
-string PrinterPosix::getDefaultPrinterName()
+std::optional<std::string> PrinterPosix::getDefaultPrinterName()
 {
     const char *defaultPrinter = cupsGetDefault();
-    return defaultPrinter ? std::string(defaultPrinter) : "";
+    return defaultPrinter ? std::optional<std::string>(defaultPrinter) : std::nullopt;
 }
 
-int PrinterPosix::printRaw(const std::vector<uint8_t> &data, const std::string &documentName, const std::string &printer)
+int PrinterPosix::printRaw(const std::vector<uint8_t> &data, const std::string &documentName, const std::optional<std::string> &printer)
 {
     // Checks if a printer was specified; otherwise, uses the default one
-    std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
-
-    if (targetPrinter.empty())
+    std::optional<std::string> targetPrinter = printer ? printer : getDefaultPrinterName();
+    if (!targetPrinter)
     {
         throw std::runtime_error("No printer specified and no default printer is set.");
     }
+    std::string resolvedPrinter = *targetPrinter;
 
     // Create a new print job
-    int job_id = cupsCreateJob(CUPS_HTTP_DEFAULT, targetPrinter.c_str(), documentName.c_str(), 0, nullptr);
+    int job_id = cupsCreateJob(CUPS_HTTP_DEFAULT, resolvedPrinter.c_str(), documentName.c_str(), 0, nullptr);
     if (job_id == 0)
     {
         throw std::runtime_error("Failed to create print job: " + std::string(cupsLastErrorString()));
     }
 
     // Start the document for the print job
-    if (HTTP_CONTINUE != cupsStartDocument(CUPS_HTTP_DEFAULT, targetPrinter.c_str(), job_id, documentName.c_str(), CUPS_FORMAT_RAW, 1))
+    if (HTTP_CONTINUE != cupsStartDocument(CUPS_HTTP_DEFAULT, resolvedPrinter.c_str(), job_id, documentName.c_str(), CUPS_FORMAT_RAW, 1))
     {
         throw std::runtime_error("Failed to start document: " + std::string(cupsLastErrorString()));
     }
@@ -58,12 +58,12 @@ int PrinterPosix::printRaw(const std::vector<uint8_t> &data, const std::string &
     // Send the raw data to the printer
     if (HTTP_CONTINUE != cupsWriteRequestData(CUPS_HTTP_DEFAULT, reinterpret_cast<const char *>(data.data()), data.size()))
     {
-        cupsFinishDocument(CUPS_HTTP_DEFAULT, targetPrinter.c_str());
+        cupsFinishDocument(CUPS_HTTP_DEFAULT, resolvedPrinter.c_str());
         throw std::runtime_error("Failed to send print data: " + std::string(cupsLastErrorString()));
     }
 
     // Finalize the document to complete the print job
-    if (IPP_STATUS_OK != cupsFinishDocument(CUPS_HTTP_DEFAULT, targetPrinter.c_str()))
+    if (IPP_STATUS_OK != cupsFinishDocument(CUPS_HTTP_DEFAULT, resolvedPrinter.c_str()))
     {
         throw std::runtime_error("Failed to finish document: " + std::string(cupsLastErrorString()));
     }
@@ -71,11 +71,80 @@ int PrinterPosix::printRaw(const std::vector<uint8_t> &data, const std::string &
     return job_id;
 }
 
+std::vector<JobInfo> PrinterPosix::getJobs(const std::optional<std::string> &printer)
+{
+    // Checks if a printer was specified; otherwise, uses the default one
+    std::optional<std::string> targetPrinter = printer ? printer : getDefaultPrinterName();
+    if (!targetPrinter)
+    {
+        throw std::runtime_error("No printer specified and no default printer is set.");
+    }
+    std::string resolvedPrinter = *targetPrinter;
+
+    cups_job_t *jobs = nullptr;
+    int numJobs = cupsGetJobs(&jobs, resolvedPrinter.c_str(), 0, CUPS_WHICHJOBS_ACTIVE);
+
+    std::vector<JobInfo> jobList;
+    for (int i = 0; i < numJobs; ++i)
+    {
+        jobList.push_back(parseJob(jobs[i]));
+    }
+
+    cupsFreeJobs(numJobs, jobs);
+    return jobList;
+}
+
+std::optional<JobInfo> PrinterPosix::getJob(int jobId, const std::optional<std::string> &printer)
+{
+    auto allJobs = getJobs(printer);
+
+    // Look for the specific jobId in the fetched jobs
+    for (const auto &job : allJobs)
+    {
+        if (job.id == jobId)
+        {
+            return job;
+        }
+    }
+
+    return std::nullopt;
+}
+
+bool PrinterPosix::cancelJob(int jobId, const std::optional<std::string> &printer)
+{
+    // Checks if a printer was specified; otherwise, uses the default one
+    std::optional<std::string> targetPrinter = printer ? printer : getDefaultPrinterName();
+    if (!targetPrinter)
+    {
+        throw std::runtime_error("No printer specified and no default printer is set.");
+    }
+    std::string resolvedPrinter = *targetPrinter;
+
+    // Try to cancel job
+    if (!cupsCancelJob(resolvedPrinter.c_str(), jobId))
+    {
+        throw std::runtime_error("Failed to cancel job: " + std::string());
+    }
+
+    return true;
+}
+
 PrinterInfo PrinterPosix::parsePrinter(const cups_dest_t &dest)
 {
     PrinterInfo info;
     info.name = dest.name;
     return info;
+}
+
+JobInfo PrinterPosix::parseJob(const cups_job_t &job)
+{
+    JobInfo jobInfo;
+    jobInfo.id = job.id;
+    jobInfo.printer = job.dest ? job.dest : "";
+    jobInfo.document = job.title ? job.title : "";
+    jobInfo.status = to_string(parseJobStatus(job.state));
+    jobInfo.user = job.user ? job.user : "";
+    return jobInfo;
 }
 
 JobStatus PrinterPosix::parseJobStatus(ipp_jstate_t state)
@@ -102,73 +171,4 @@ JobStatus PrinterPosix::parseJobStatus(ipp_jstate_t state)
         return JobStatus::WAITING_FOR_DEVICE;
 
     return JobStatus::UNKNOWN;
-}
-
-JobInfo PrinterPosix::parseJob(const cups_job_t &job)
-{
-    JobInfo jobInfo;
-    jobInfo.id = job.id;
-    jobInfo.printer = job.dest ? job.dest : "";
-    jobInfo.document = job.title ? job.title : "";
-    jobInfo.status = to_string(parseJobStatus(job.state));
-    jobInfo.user = job.user ? job.user : "";
-    return jobInfo;
-}
-
-std::vector<JobInfo> PrinterPosix::getJobs(const std::string &printer)
-{
-    // Checks if a printer was specified; otherwise, uses the default one
-    std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
-
-    if (targetPrinter.empty())
-    {
-        throw std::runtime_error("No printer specified and no default printer is set.");
-    }
-
-    cups_job_t *jobs = nullptr;
-    int numJobs = cupsGetJobs(&jobs, targetPrinter.c_str(), 0, CUPS_WHICHJOBS_ACTIVE);
-
-    std::vector<JobInfo> jobList;
-    for (int i = 0; i < numJobs; ++i)
-    {
-        jobList.push_back(parseJob(jobs[i]));
-    }
-
-    cupsFreeJobs(numJobs, jobs);
-    return jobList;
-}
-
-std::optional<JobInfo> PrinterPosix::getJob(int jobId, const std::string &printer)
-{
-    auto allJobs = getJobs(printer);
-
-    // Look for the specific jobId in the fetched jobs
-    for (const auto &job : allJobs)
-    {
-        if (job.id == jobId)
-        {
-            return job;
-        }
-    }
-
-    return std::nullopt;
-}
-
-bool PrinterPosix::cancelJob(int jobId, const std::string &printer)
-{
-    // Checks if a printer was specified; otherwise, uses the default one
-    std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
-
-    if (targetPrinter.empty())
-    {
-        throw std::runtime_error("No printer specified and no default printer is set.");
-    }
-
-    // Try to cancel job
-    if (!cupsCancelJob(targetPrinter.c_str(), jobId))
-    {
-        throw std::runtime_error("Failed to cancel job: " + std::string());
-    }
-
-    return true;
 }
