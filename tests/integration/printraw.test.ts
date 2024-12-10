@@ -46,9 +46,9 @@ describe('Integration: Printer printRaw', () => {
             // Verify the job was successfully canceled
             expect(cancelResult).toBe(true);
 
-            // Verify that the job no longer exists or its status is canceled
+            // Verify that the job no longer exists
             const canceledJob = await printer.getJob(printResult);
-            expect(canceledJob?.status).toBe('canceled');
+            expect(canceledJob).toBeNull();
         }
     });
 });

@@ -149,7 +149,7 @@ std::optional<JobInfo> PrinterPosix::getJob(int jobId, const std::string &printe
     }
 
     cups_job_t *jobs = nullptr;
-    int numJobs = cupsGetJobs(&jobs, targetPrinter.c_str(), 0, CUPS_WHICHJOBS_ALL);
+    int numJobs = cupsGetJobs(&jobs, targetPrinter.c_str(), 0, CUPS_WHICHJOBS_ACTIVE);
 
     for (int i = 0; i < numJobs; ++i)
     {
