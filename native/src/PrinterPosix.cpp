@@ -138,7 +138,7 @@ std::vector<JobInfo> PrinterPosix::getJobs(const std::string &printer)
     return jobList;
 }
 
-JobInfo PrinterPosix::getJob(int jobId, const std::string &printer)
+std::optional<JobInfo> PrinterPosix::getJob(int jobId, const std::string &printer)
 {
     // Checks if a printer was specified; otherwise, uses the default one
     std::string targetPrinter = printer.empty() ? getDefaultPrinterName() : printer;
@@ -162,7 +162,7 @@ JobInfo PrinterPosix::getJob(int jobId, const std::string &printer)
     }
 
     cupsFreeJobs(numJobs, jobs);
-    throw std::runtime_error("Job not found.");
+    return std::nullopt;
 }
 
 bool PrinterPosix::cancelJob(int jobId, const std::string &printer)
