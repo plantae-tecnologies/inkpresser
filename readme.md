@@ -1,21 +1,22 @@
-# InkPresser
+# 🖨️ InkPresser
+
 A Node.js library for handling printers and print jobs, with easy integration across modern Node.js and Electron versions.
 
-## Installation
-InkPresser uses `node-gyp` for building native bindings during installation. Make sure your environment has the necessary dependencies, such as Python and a compatible C++ compiler (e.g., GCC on Linux, Build Tools for Visual Studio on Windows). 
+## 🚀 Installation
 
-Install it via GitHub:
+InkPresser uses `node-gyp` for building native bindings during installation. Ensure your environment has the necessary dependencies, such as Python and a compatible C++ compiler (e.g., GCC on Linux, Build Tools for Visual Studio on Windows).
+
 ```bash
-npm i github:plantae-tecnologies/inkpresser
+npm install @plantae-tech/inkpresser
 ```
 
-## Usage
+## 📖 Usage
 
-Here’s how you can use:
+Here’s how you can use InkPresser in your project:
 
 ### List Available Printers
 ```typescript
-import { PrintManager } from 'inkpresser';
+import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
 
 const printers = await manager.getPrinters();
@@ -24,7 +25,7 @@ const printers = await manager.getPrinters();
 
 ### Get the Default Printer
 ```typescript
-import { PrintManager } from 'inkpresser';
+import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
 
 const defaultPrinter = await manager.getDefaultPrinter();
@@ -33,7 +34,7 @@ const defaultPrinter = await manager.getDefaultPrinter();
 
 ### Print a Document
 ```typescript
-import { PrintManager } from 'inkpresser';
+import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
 
 const printers = await manager.getPrinters();
@@ -46,7 +47,7 @@ const jobId = await printer.printRaw(document, 'SampleDocument');
 
 ### Manage Print Jobs
 ```typescript
-import { PrintManager } from 'inkpresser';
+import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
 
 const printers = await manager.getPrinters();
@@ -64,7 +65,7 @@ const cancelResult = await jobs[0]?.cancel();
 
 ### Get a Job by ID
 ```typescript
-import { PrintManager } from 'inkpresser';
+import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
 
 const printers = await manager.getPrinters();
