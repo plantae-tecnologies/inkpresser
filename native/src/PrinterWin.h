@@ -11,11 +11,11 @@ class PrinterWin : public PrinterInterface
 {
 public:
     std::vector<PrinterInfo> getPrinters() override;
-    int printRaw(const std::vector<uint8_t> &data, const std::string &documentName, const std::string &printer = "") override;
-    std::string getDefaultPrinterName() override;
-    std::vector<JobInfo> getJobs(const std::string &printer = "") override;
-    std::optional<JobInfo> getJob(int jobId, const std::string &printer = "") override;
-    bool cancelJob(int jobId, const std::string &printer = "") override;
+    std::optional<std::string> getDefaultPrinterName() override;
+    int printRaw(const std::vector<uint8_t> &data, const std::string &documentName, const std::optional<std::string> &printer = std::nullopt) override;
+    std::vector<JobInfo> getJobs(const std::optional<std::string> &printer = std::nullopt) override;
+    std::optional<JobInfo> getJob(int jobId, const std::optional<std::string> &printer = std::nullopt) override;
+    bool cancelJob(int jobId, const std::optional<std::string> &printer = std::nullopt) override;
 
 private:
     JobInfo parseJob(const JOB_INFO_1A &jobInfo);
