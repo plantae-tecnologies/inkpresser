@@ -13,6 +13,7 @@ public:
     std::vector<PrinterInfo> getPrinters() override;
     std::optional<std::string> getDefaultPrinterName() override;
     int printRaw(const std::vector<uint8_t> &data, const std::string &documentName, const std::optional<std::string> &printer = std::nullopt) override;
+    int print(const std::vector<uint8_t> &data, const std::string &documentName, const std::optional<std::string> &printer = std::nullopt) override;
     std::vector<JobInfo> getJobs(const std::optional<std::string> &printer = std::nullopt) override;
     std::optional<JobInfo> getJob(int jobId, const std::optional<std::string> &printer = std::nullopt) override;
     bool cancelJob(int jobId, const std::optional<std::string> &printer = std::nullopt) override;

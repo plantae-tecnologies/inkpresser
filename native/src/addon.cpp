@@ -91,6 +91,43 @@ Napi::Value printRaw(const Napi::CallbackInfo &info)
     }
 }
 
+Napi::Value print(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    // Validate input: Expect data (Buffer), documentName (string), and optionally printer (string)
+    if (info.Length() < 2 || !info[0].IsBuffer() || !info[1].IsString())
+    {
+        Napi::TypeError::New(env, "Expected a Buffer (data) and a string (documentName), and optionally a string (printer)").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    // Get the data as a Buffer
+    Napi::Buffer<uint8_t> buffer = info[0].As<Napi::Buffer<uint8_t>>();
+    std::vector<uint8_t> data(buffer.Data(), buffer.Data() + buffer.Length());
+
+    // Get the document name
+    std::string documentName = info[1].As<Napi::String>();
+
+    // Get the printer name (optional)
+    std::optional<std::string> printer = std::nullopt;
+    if (info.Length() > 2 && info[2].IsString())
+    {
+        printer = info[2].As<Napi::String>();
+    }
+
+    try
+    {
+        auto builder = PrinterBuilder::Create();
+        int jobId = builder->print(data, documentName, printer);
+        return Napi::Number::New(env, jobId);
+    }
+    catch (const std::exception &e)
+    {
+        Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+}
+
 Napi::Value getJobs(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
@@ -208,6 +245,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports.Set("getDefaultPrinterName", Napi::Function::New(env, getDefaultPrinterName));
     exports.Set("getPrinters", Napi::Function::New(env, getPrinters));
     exports.Set("printRaw", Napi::Function::New(env, printRaw));
+    exports.Set("print", Napi::Function::New(env, print));
     exports.Set("getJobs", Napi::Function::New(env, getJobs));
     exports.Set("getJob", Napi::Function::New(env, getJob));
     exports.Set("cancelJob", Napi::Function::New(env, cancelJob));

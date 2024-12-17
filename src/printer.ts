@@ -9,6 +9,10 @@ export class Printer {
         this.name = params.name;
     }
 
+    async print(data: Uint8Array, documentName: string): Promise<number> {
+        return bindings.print(data, documentName, this.name);
+    }
+
     async printRaw(data: Uint8Array, documentName: string): Promise<number> {
         return bindings.printRaw(data, documentName, this.name);
     }

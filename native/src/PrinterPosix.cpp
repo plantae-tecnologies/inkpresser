@@ -71,6 +71,46 @@ int PrinterPosix::printRaw(const std::vector<uint8_t> &data, const std::string &
     return job_id;
 }
 
+int PrinterPosix::print(const std::vector<uint8_t> &data, const std::string &documentName, const std::optional<std::string> &printer)
+{
+    // Verifica se uma impressora foi especificada; caso contrário, usa a padrão
+    std::optional<std::string> targetPrinter = printer ? printer : getDefaultPrinterName();
+    if (!targetPrinter)
+    {
+        throw std::runtime_error("No printer specified and no default printer is set.");
+    }
+    std::string resolvedPrinter = *targetPrinter;
+
+    // Cria um novo job de impressão
+    int job_id = cupsCreateJob(CUPS_HTTP_DEFAULT, resolvedPrinter.c_str(), documentName.c_str(), 0, nullptr);
+    if (job_id == 0)
+    {
+        throw std::runtime_error("Failed to create print job: " + std::string(cupsLastErrorString()));
+    }
+
+    // Inicia o documento no formato genérico (CUPS_FORMAT_AUTO ou application/octet-stream)
+    if (HTTP_CONTINUE != cupsStartDocument(CUPS_HTTP_DEFAULT, resolvedPrinter.c_str(), job_id, documentName.c_str(), CUPS_FORMAT_AUTO, 1))
+    {
+        throw std::runtime_error("Failed to start document: " + std::string(cupsLastErrorString()));
+    }
+
+    // Envia os dados binários (buffer) para a impressora
+    if (HTTP_CONTINUE != cupsWriteRequestData(CUPS_HTTP_DEFAULT, reinterpret_cast<const char *>(data.data()), data.size()))
+    {
+        cupsFinishDocument(CUPS_HTTP_DEFAULT, resolvedPrinter.c_str());
+        throw std::runtime_error("Failed to send print data: " + std::string(cupsLastErrorString()));
+    }
+
+    // Finaliza o documento e completa o job de impressão
+    if (IPP_STATUS_OK != cupsFinishDocument(CUPS_HTTP_DEFAULT, resolvedPrinter.c_str()))
+    {
+        throw std::runtime_error("Failed to finish document: " + std::string(cupsLastErrorString()));
+    }
+
+    return job_id; // Retorna o ID do job de impressão
+}
+
+
 std::vector<JobInfo> PrinterPosix::getJobs(const std::optional<std::string> &printer)
 {
     // Checks if a printer was specified; otherwise, uses the default one
