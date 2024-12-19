@@ -1,10 +1,12 @@
 # 🖨️ InkPresser
 
-A Node.js library for handling printers and print jobs, with easy integration across modern Node.js and Electron versions.
+InkPresser is a library for managing printers and handling print jobs. It provides integration with Node.js and Electron applications, supporting multiple operating systems and compatible with a wide range of Node.js and Electron versions.
 
 ## 🚀 Installation
 
-InkPresser uses `node-gyp` for building native bindings during installation. Ensure your environment has the necessary dependencies, such as Python and a compatible C++ compiler (e.g., GCC on Linux, Build Tools for Visual Studio on Windows).
+We use `node-gyp` for building native bindings during installation. Ensure your environment has the necessary dependencies, such as Python and a compatible C++ compiler (e.g., GCC on Linux, Build Tools for Visual Studio on Windows).
+
+For detailed instructions, refer to the [node-gyp documentation](https://github.com/nodejs/node-gyp).
 
 ```bash
 npm install @plantae-tech/inkpresser
@@ -20,7 +22,10 @@ import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
 
 const printers = await manager.getPrinters();
-// output: [{ name: "Printer1" }, { name: "Printer2" }]
+// output: [
+//   { name: "Printer1", isDefault: false },
+//   { name: "Printer2", isDefault: true }
+// ]
 ```
 
 ### Get the Default Printer
@@ -29,16 +34,14 @@ import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
 
 const defaultPrinter = await manager.getDefaultPrinter();
-// output: { name: "DefaultPrinter" }
+// output: { name: "Printer2", isDefault: true }
 ```
 
 ### Print a Document
 ```typescript
 import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
-
-const printers = await manager.getPrinters();
-const printer = printers[0];
+const printer = await manager.getDefaultPrinter();
 
 const document = Buffer.from('Hello, printer!');
 const jobId = await printer.printRaw(document, 'SampleDocument');
@@ -49,14 +52,12 @@ const jobId = await printer.printRaw(document, 'SampleDocument');
 ```typescript
 import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
-
-const printers = await manager.getPrinters();
-const printer = printers[0];
+const printer = await manager.getDefaultPrinter();
 
 const jobs = await printer.getJobs();
 // output: [
-//   { id: 1, printer: { name: "Printer1" }, document: "Document1", status: "queued", user: "user1" },
-//   { id: 2, printer: { name: "Printer1" }, document: "Document2", status: "printing", user: "user1" }
+//   { id: 1, printer: { name: "Printer1", isDefault: true }, document: "Document1", status: "queued", user: "user1" },
+//   { id: 2, printer: { name: "Printer1", isDefault: true }, document: "Document2", status: "printing", user: "user1" }
 // ]
 
 const cancelResult = await jobs[0]?.cancel();
@@ -67,10 +68,8 @@ const cancelResult = await jobs[0]?.cancel();
 ```typescript
 import { PrintManager } from '@plantae-tech/inkpresser';
 const manager = new PrintManager();
-
-const printers = await manager.getPrinters();
-const printer = printers[0];
+const printer = await manager.getDefaultPrinter();
 
 const job = await printer.getJob(1);
-// output: { id: 1, printer: { name: "Printer1" }, document: "Document1", status: "queued", user: "user1" }
+// output: { id: 1, printer: { name: "Printer2", isDefault: true }, document: "Document1", status: "queued", user: "user1" }
 ```
