@@ -133,6 +133,7 @@ PrinterInfo PrinterPosix::parsePrinter(const cups_dest_t &dest)
 {
     PrinterInfo info;
     info.name = dest.name;
+    info.isDefault = dest.is_default;
     return info;
 }
 

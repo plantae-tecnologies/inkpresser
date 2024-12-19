@@ -6,6 +6,7 @@
 struct PrinterInfo
 {
     std::string name;
+    bool isDefault;
 };
 
 #endif

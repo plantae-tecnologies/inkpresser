@@ -41,6 +41,7 @@ Napi::Value getPrinters(const Napi::CallbackInfo &info)
         {
             Napi::Object printerObj = Napi::Object::New(env);
             printerObj.Set("name", printers[i].name);
+            printerObj.Set("isDefault", printers[i].isDefault);
             result[i] = printerObj;
         }
 
