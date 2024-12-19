@@ -2,6 +2,7 @@ import { Printer } from './printer';
 
 export type PrinterInfo = {
     name: string;
+    isDefault?: boolean;
 };
 
 export interface JobInfo {

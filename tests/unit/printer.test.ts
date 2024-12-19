@@ -19,10 +19,20 @@ describe('Printer', () => {
         vi.mocked(bindings.getJob).mockClear();
     });
 
-    it('should initialize with the correct name', () => {
+    it('should initialize with attributes', () => {
+        const printerName = 'TestPrinter';
+        const printer = new Printer({ name: printerName, isDefault: true });
+
+        expect(printer.name).toBe(printerName);
+        expect(printer.isDefault).toBe(true);
+    });
+
+    it('should allow instantiation without specifying isDefault attribute', () => {
         const printerName = 'TestPrinter';
         const printer = new Printer({ name: printerName });
+
         expect(printer.name).toBe(printerName);
+        expect(printer.isDefault).toBeNull();
     });
 
     it('should send a print job and return the job ID', async () => {

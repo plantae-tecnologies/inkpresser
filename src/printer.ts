@@ -4,9 +4,11 @@ import { Job } from './job';
 
 export class Printer {
     name: string;
+    isDefault: boolean | null;
 
     constructor(params: PrinterInfo) {
         this.name = params.name;
+        this.isDefault = params.isDefault ?? null;
     }
 
     async printRaw(data: Uint8Array, documentName: string): Promise<number> {

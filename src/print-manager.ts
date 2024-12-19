@@ -10,6 +10,6 @@ export class PrintManager {
 
     async getDefaultPrinter(): Promise<Printer> {
         const defaultPrinterName: string = bindings.getDefaultPrinterName();
-        return new Printer({ name: defaultPrinterName });
+        return new Printer({ name: defaultPrinterName, isDefault: true });
     }
 }

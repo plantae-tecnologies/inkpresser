@@ -25,11 +25,15 @@ std::vector<PrinterInfo> PrinterWin::getPrinters()
         throw std::runtime_error("Failed to enumerate printers.");
     }
 
+    std::string defaultPrinter = getDefaultPrinterName().value_or("");
+
     // Encapsulate printers
     std::vector<PrinterInfo> printers;
     for (DWORD i = 0; i < returned; ++i)
     {
-        printers.push_back(parsePrinter(printerInfo[i]));
+        PrinterInfo info = parsePrinter(printerInfo[i]);
+        info.isDefault = (info.name == defaultPrinter);
+        printers.push_back(info);
     }
 
     return printers;

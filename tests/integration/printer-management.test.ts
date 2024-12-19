@@ -18,6 +18,7 @@ describe('Integration: Print System', () => {
         printers.forEach((printer) => {
             expect(printer).toBeInstanceOf(Printer);
             expect(printer).toHaveProperty('name');
+            expect(printer).toHaveProperty('isDefault');
         });
     });
 
