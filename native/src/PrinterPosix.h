@@ -6,6 +6,7 @@
 #include <cups/cups.h>
 #include <vector>
 #include <string>
+#include <cstdint>
 
 class PrinterPosix : public PrinterInterface
 {

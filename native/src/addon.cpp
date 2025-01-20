@@ -1,4 +1,5 @@
 #include <napi.h>
+#include <cstdint>
 #include "PrinterBuilder.h"
 
 Napi::Value getDefaultPrinterName(const Napi::CallbackInfo &info)

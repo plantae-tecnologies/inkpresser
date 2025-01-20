@@ -5,6 +5,7 @@
 #include "JobStatus.h"
 #include <vector>
 #include <string>
+#include <cstdint>
 #include <windows.h>
 
 class PrinterWin : public PrinterInterface
