@@ -46,5 +46,6 @@
   "dependencies": {
     "node-addon-api": "^8.3.0",
     "node-gyp": "^11.0.0"
-  }
+  },
+  "license": "MIT"
 }
